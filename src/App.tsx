@@ -1,12 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import { Authenticated, Unauthenticated } from "convex/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { Id } from "../convex/_generated/dataModel";
 import Header from "./components/Header";
 import AgentsSidebar from "./components/AgentsSidebar";
 import MissionQueue from "./components/MissionQueue";
 import LiveFeed from "./components/LiveFeed";
 import SignInForm from "./components/SignIn";
+import TaskDetailPanel from "./components/TaskDetailPanel";
 
 export default function App() {
 	const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
@@ -34,6 +37,7 @@ export default function App() {
 		document.addEventListener("keydown", onKeyDown);
 		return () => document.removeEventListener("keydown", onKeyDown);
 	}, [closeSidebars, isAnySidebarOpen]);
+	const [selectedTaskId, setSelectedTaskId] = useState<Id<"tasks"> | null>(null);
 
 	return (
 		<>
@@ -62,11 +66,20 @@ export default function App() {
 						isOpen={isLeftSidebarOpen}
 						onClose={() => setIsLeftSidebarOpen(false)}
 					/>
-					<MissionQueue />
+					<MissionQueue 
+						selectedTaskId={selectedTaskId} 
+						onSelectTask={setSelectedTaskId} 
+					/>
 					<LiveFeed
 						isOpen={isRightSidebarOpen}
 						onClose={() => setIsRightSidebarOpen(false)}
 					/>
+          {selectedTaskId && (
+						<TaskDetailPanel 
+							taskId={selectedTaskId} 
+							onClose={() => setSelectedTaskId(null)} 
+						/>
+					)}
 				</main>
 			</Authenticated>
 			<Unauthenticated>

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import SignOutButton from "./Signout";
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
 
 type HeaderProps = {
 	onOpenAgents?: () => void;
@@ -8,6 +10,14 @@ type HeaderProps = {
 
 const Header: React.FC<HeaderProps> = ({ onOpenAgents, onOpenLiveFeed }) => {
 	const [time, setTime] = useState(new Date());
+	
+	// Fetch data for dynamic counts
+	const agents = useQuery(api.queries.listAgents);
+	const tasks = useQuery(api.queries.listTasks);
+
+	// Calculate counts
+	const activeAgentsCount = agents ? agents.filter(a => a.status === "active").length : 0;
+	const tasksInQueueCount = tasks ? tasks.filter(t => t.status !== "done").length : 0;
 
 	useEffect(() => {
 		const timer = setInterval(() => setTime(new Date()), 1000);
@@ -59,14 +69,18 @@ const Header: React.FC<HeaderProps> = ({ onOpenAgents, onOpenLiveFeed }) => {
 
 			<div className="hidden md:flex items-center gap-10">
 				<div className="flex flex-col items-center">
-					<div className="text-2xl font-bold text-foreground">11</div>
+					<div className="text-2xl font-bold text-foreground">
+						{agents ? activeAgentsCount : "-"}
+					</div>
 					<div className="text-[10px] font-semibold text-muted-foreground tracking-tighter">
 						AGENTS ACTIVE
 					</div>
 				</div>
 				<div className="w-px h-8 bg-border" />
 				<div className="flex flex-col items-center">
-					<div className="text-2xl font-bold text-foreground">35</div>
+					<div className="text-2xl font-bold text-foreground">
+						{tasks ? tasksInQueueCount : "-"}
+					</div>
 					<div className="text-[10px] font-semibold text-muted-foreground tracking-tighter">
 						TASKS IN QUEUE
 					</div>
