@@ -1,6 +1,6 @@
 "use client";
 
-import { Authenticated, Unauthenticated } from "@convex-dev/auth/react";
+import { useConvexAuth } from "convex/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Id } from "../convex/_generated/dataModel";
 import Header from "./components/Header";
@@ -15,6 +15,7 @@ import AddAgentModal from "./components/AddAgentModal";
 import AgentDetailTray from "./components/AgentDetailTray";
 
 export default function App() {
+	const { isAuthenticated, isLoading } = useConvexAuth();
 	const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
 	const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
 
@@ -87,7 +88,11 @@ export default function App() {
 
 	return (
 		<>
-			<Authenticated>
+			{isLoading ? (
+				<div className="flex min-h-screen items-center justify-center">
+					<div className="text-foreground">Loading...</div>
+				</div>
+			) : isAuthenticated ? (
 				<main className="app-container">
 					<Header
 						onOpenAgents={() => {
@@ -183,10 +188,9 @@ export default function App() {
 						</>
 					)}
 				</main>
-			</Authenticated>
-			<Unauthenticated>
+			) : (
 				<SignInForm />
-			</Unauthenticated>
+			)}
 		</>
 	);
 }
