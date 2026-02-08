@@ -17,8 +17,22 @@ import AgentDetailTray from "./components/AgentDetailTray";
 
 export default function App() {
 	const viewer = useQuery(api.queries.viewer);
-	const isAuthenticated = viewer !== undefined && viewer !== null;
-	const isLoading = viewer === undefined;
+	// TEMP FIX: Check localStorage directly until viewer query auth is fixed
+	const [hasToken, setHasToken] = useState(false);
+	
+	useEffect(() => {
+		const checkToken = () => {
+			const jwt = localStorage.getItem('__convexAuthJWT_httpsusefulbadger761euwest1convexcloud');
+			setHasToken(!!jwt);
+		};
+		checkToken();
+		// Listen for storage changes
+		window.addEventListener('storage', checkToken);
+		return () => window.removeEventListener('storage', checkToken);
+	}, []);
+	
+	const isAuthenticated = hasToken || (viewer !== undefined && viewer !== null);
+	const isLoading = !hasToken && viewer === undefined;
 	
 	const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
 	const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
