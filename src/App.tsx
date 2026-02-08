@@ -1,6 +1,6 @@
 "use client";
 
-import { Authenticated, Unauthenticated } from "convex/react";
+import { Authenticated, Unauthenticated } from "@convex-dev/auth/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Id } from "../convex/_generated/dataModel";
 import Header from "./components/Header";
