@@ -158,6 +158,8 @@ export const listMessages = query({
 export const viewer = query({
 args: {},
 handler: async (ctx) => {
-return await auth.getUserIdentity(ctx);
+const userId = await auth.getUserId(ctx);
+if (!userId) return null;
+return await ctx.db.get(userId);
 },
 });
