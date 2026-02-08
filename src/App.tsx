@@ -1,7 +1,8 @@
 "use client";
 
-import { useConvexAuth } from "convex/react";
+import { useQuery } from "convex/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { api } from "../convex/_generated/api";
 import { Id } from "../convex/_generated/dataModel";
 import Header from "./components/Header";
 import AgentsSidebar from "./components/AgentsSidebar";
@@ -15,7 +16,10 @@ import AddAgentModal from "./components/AddAgentModal";
 import AgentDetailTray from "./components/AgentDetailTray";
 
 export default function App() {
-	const { isAuthenticated, isLoading } = useConvexAuth();
+	const viewer = useQuery(api.queries.viewer);
+	const isAuthenticated = viewer !== undefined && viewer !== null;
+	const isLoading = viewer === undefined;
+	
 	const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
 	const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
 
