@@ -1,5 +1,6 @@
 import { query } from "./_generated/server";
 import { v } from "convex/values";
+import { auth } from "./auth";
 
 function assertTenant(
 	record: { tenantId?: string } | null,
@@ -157,6 +158,6 @@ export const listMessages = query({
 export const viewer = query({
 args: {},
 handler: async (ctx) => {
-return await ctx.auth.getUserIdentity();
+return await auth.getUserIdentity(ctx);
 },
 });
